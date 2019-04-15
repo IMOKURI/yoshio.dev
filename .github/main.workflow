@@ -17,5 +17,5 @@ action "Setup Google Cloud" {
 action "GitHub Action for Google Cloud" {
   uses = "actions/gcloud/cli@master"
   needs = ["Setup Google Cloud"]
-  args = ["compute", "copy-files", "--zone", "us-west1-b", ".", "yoshio-vm001:/tmp/github_actions"]
+  args = ["compute", "copy-files", "--project", "steady-petal-233414", "--zone", "us-west1-b", ".", "yoshio-vm001:/tmp/github_actions"]
 }
