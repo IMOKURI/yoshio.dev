@@ -1,0 +1,9 @@
+.git
+.github
+.gitignore
+
+Pipfile
+README.md
+
+.releaseignore
+release.sh
