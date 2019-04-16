@@ -11,7 +11,11 @@ app = Flask(__name__)
 
 @app.route('/')
 def welcome():
-    return render_template('index.html')
+    return render_template(
+        'index.html',
+        title='Welcome to yoshio.dev!',
+        date='2019/4/16'
+    )
 
 
 if __name__ == '__main__':
