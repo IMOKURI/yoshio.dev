@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="ja">
     <head>
-        <title>{{ title }}</title>
+        <title>{% block title %}{% endblock %}</title>
         <meta name="viewport" content="width=device-width">
-        <link rel="stylesheet" href="{{url_for('static', filename='index.css')}}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
     </head>
     <body>
         <main>
             <article>
                 <header>
-                    <h1>{{ title }}</h1>
+                    <h1>{{ self.title() }}</h1>
+                    {% if date %}
                     <time>{{ date }}</time>
+                    {% endif %}
                 </header>
 
-                <p>風呂入ってあったまろ。</p>
+                {% block content %}{% endblock %}
 
                 <footer>
                     </p>Follow me on <a href='https://github.com/IMOKURI'>GitHub</a></p>

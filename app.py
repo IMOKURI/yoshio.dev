@@ -10,12 +10,16 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def welcome():
+def home():
     return render_template(
-        'index.html',
-        title='Welcome to yoshio.dev!',
+        'pages/index.html',
         date='2019/4/16'
     )
+
+
+@app.errorhandler(404)
+def error_not_found(error):
+    return render_template('errors/404.html'), 404
 
 
 if __name__ == '__main__':
