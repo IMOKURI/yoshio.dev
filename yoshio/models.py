@@ -1,23 +1,22 @@
-from sqlalchemy import *
+from datetime import datetime
+import sqlalchemy as sql
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from yoshio import db
 
 
 class User(db.Model):
-    userid = Column(Integer, primary_key=True)
-    username = Column(Unicode(128))
-    lineid = Column(String(128), unique=True, index=True)
-    password_hash = Column(String(128))
+    lineid = sql.Column(sql.String(128), primary_key=True)
+    username = sql.Column(sql.Unicode(128))
+    password_hash = sql.Column(sql.String(128))
 
-    def __init__(self, userid, username, lineid, password):
-        self.userid = userid
-        self.username = username
+    def __init__(self, lineid, username, password):
         self.lineid = lineid
+        self.username = username
         self.set_password(password)
 
     def __repr__(self):
-        return '<User userid={} lineid={!r}>'.format(self.userid, self.lineid)
+        return '<User lineid={!r}>'.format(self.lineid)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -27,13 +26,20 @@ class User(db.Model):
 
 
 class WorkingHours(db.Model):
-    lineid = Column(
-        String(128),
-        ForeignKey('user.lineid', onupdate='CASCADE', ondelete='CASCADE'),
-        primary_key=True
+    whid = sql.Column(
+        sql.Integer,
+        default=0,
+        primary_key=True,
+        autoincrement=True
     )
-    date = Column(DATETIME)
-    action = Column(String(128))
+    lineid = sql.Column(
+        sql.String(128),
+        sql.ForeignKey('user.lineid', onupdate='CASCADE', ondelete='CASCADE'),
+        index=True
+    )
+    action = sql.Column(sql.Unicode(128))
+    date = sql.Column(sql.DATETIME, default=datetime.now, nullable=False)
+    sqlite_autoincrement = True
 
 
 def init():
