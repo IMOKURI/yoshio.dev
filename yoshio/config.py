@@ -1,7 +1,7 @@
 import os
 
 
-def apply_to(app, test_config):
+def apply_to(app):
     """Apply configurations"""
 
     env = os.environ.get('FLASK_ENV') or 'Dev'
@@ -22,9 +22,11 @@ def apply_to(app, test_config):
         DEBUG=debug
     )
 
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # load the test config if passed in
-        app.config.update(test_config)
+    # load the instance config, if it exists, when not testing
+    app.config.from_pyfile('config.py', silent=True)
+
+    # ensure the instance folder exists
+    try:
+        os.makedirs(app.instance_path)
+    except OSError:
+        pass

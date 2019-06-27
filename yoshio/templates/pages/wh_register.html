@@ -2,12 +2,13 @@
 {% block title %}Welcome to yoshio.dev!{% endblock %}
 {% block content %}
 
-<p>ログイン画面だよ。</p>
+<p>お仲間紹介ください。</p>
 
-<form action="/working_hours/login" method="POST">
+<form action="/working_hours/register" method="POST">
+    <p>名前(ニックネーム): <input name="username"></input></p>
     <p>Line ID: <input name="lineid"></input></p>
     <p>パスワード: <input name="password" type="password"></input></p>
-    <p><input type="submit" name="ログイン" /></p>
+    <p><input type="submit" name="登録" /></p>
 </form>
 
 {% endblock %}

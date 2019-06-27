@@ -1,0 +1,10 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Welcome to yoshio.dev!{% endblock %}
+{% block content %}
+
+<p>なにする？</p>
+
+<p><a href={{ url_for('working_hours.register') }}>Add new user</a></p>
+<p><a href={{ url_for('working_hours.logout') }}>Logout</a></p>
+
+{% endblock %}
