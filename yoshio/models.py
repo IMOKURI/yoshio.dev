@@ -1,11 +1,17 @@
 from datetime import datetime
+import flask_login as fl
 import sqlalchemy as sql
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from yoshio import db
+from flask_sqlalchemy import SQLAlchemy
 
 
-class User(db.Model):
+db = SQLAlchemy()
+
+
+class User(db.Model, fl.UserMixin):
+    __tablename__ = 'users'
+
     lineid = sql.Column(sql.String(128), primary_key=True)
     username = sql.Column(sql.Unicode(128))
     password_hash = sql.Column(sql.String(128))
@@ -26,6 +32,8 @@ class User(db.Model):
 
 
 class WorkingHours(db.Model):
+    __tablename__ = 'working_hours'
+
     whid = sql.Column(
         sql.Integer,
         default=0,
@@ -40,7 +48,3 @@ class WorkingHours(db.Model):
     action = sql.Column(sql.Unicode(128))
     date = sql.Column(sql.DATETIME, default=datetime.now, nullable=False)
     sqlite_autoincrement = True
-
-
-def init():
-    db.create_all()

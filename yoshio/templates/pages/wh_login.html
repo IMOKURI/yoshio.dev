@@ -1,0 +1,12 @@
+{% extends 'layouts/main.html' %}
+{% block title %}Welcome to yoshio.dev!{% endblock %}
+{% block content %}
+
+<p>ログイン画面だよ。</p>
+
+<form action="/working_hours/login" method="POST">
+    <input name="lineid"></input>
+    <input name="password" type="password"></input>
+</form>
+
+{% endblock %}
