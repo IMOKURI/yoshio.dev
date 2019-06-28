@@ -1,5 +1,17 @@
-from flask import Blueprint, render_template, request, redirect, flash, session
+from flask import (
+    Blueprint,
+    abort,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    request,
+)
 import flask_login as fl
+
+from linebot import LineBotApi, WebhookHandler
+from linebot.exceptions import InvalidSignatureError
+import linebot.models as lm
 
 from yoshio import db
 from yoshio.models import User
@@ -14,6 +26,9 @@ except ImportError:
 
 
 bp = Blueprint('working_hours', __name__, url_prefix="/working_hours")
+
+line_bot_api = LineBotApi(current_app.config['CHANNEL_ACCESS_TOKEN'])
+handler = WebhookHandler(current_app.config['CHANNEL_SECRET'])
 
 
 @bp.route('/')
@@ -83,3 +98,22 @@ def logout():
     fl.logout_user()
     flash('Logout successfull! See you, {}'.format(user.username))
     return redirect('/working_hours')
+
+
+@bp.route('/callback', methods=['POST'])
+def callback():
+    signature = request.headers['X-Line-Signature']
+    body = request.get_data(as_text=True)
+    try:
+        handler.handle(body, signature)
+    except InvalidSignatureError:
+        abort(400)
+    return 'OK'
+
+
+@handler.add(lm.MessageEvent, message=lm.TextMessage)
+def handle_message(event):
+    line_bot_api.reply_message(
+        event.reply_token,
+        lm.TextSendMessage(text=event.message.text)
+    )
