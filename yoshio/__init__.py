@@ -2,11 +2,16 @@ from flask import Flask, render_template, redirect, url_for
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
+from linebot import LineBotApi, WebhookHandler
+
 from yoshio import config
 
 
 app = Flask(__name__, instance_relative_config=True)
 config.apply_to(app)
+
+line_bot_api = LineBotApi(app.config['CHANNEL_ACCESS_TOKEN'])
+handler = WebhookHandler(app.config['CHANNEL_SECRET'])
 
 db = SQLAlchemy(app)
 

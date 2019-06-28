@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
+
 from flask import (
     Blueprint,
     abort,
-    current_app,
     flash,
     redirect,
     render_template,
@@ -9,11 +10,10 @@ from flask import (
 )
 import flask_login as fl
 
-from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
 import linebot.models as lm
 
-from yoshio import db
+from yoshio import db, line_bot_api, handler
 from yoshio.models import User
 
 
@@ -26,9 +26,6 @@ except ImportError:
 
 
 bp = Blueprint('working_hours', __name__, url_prefix="/working_hours")
-
-line_bot_api = LineBotApi(current_app.config['CHANNEL_ACCESS_TOKEN'])
-handler = WebhookHandler(current_app.config['CHANNEL_SECRET'])
 
 
 @bp.route('/')
@@ -51,10 +48,10 @@ def login():
 
         if authenticated:
             fl.login_user(user, remember=True)
-            flash('Login successfull!', 'success')
+            flash(u'ログインしました(^^)', 'success')
             return redirect('/working_hours/dashboard')
 
-        flash('Login failed...', 'fail')
+        flash(u'ログインに失敗しました。。。', 'fail')
 
     return render_template('pages/wh_login.html')
 
@@ -96,7 +93,7 @@ def register():
 def logout():
     user = fl.current_user
     fl.logout_user()
-    flash('Logout successfull! See you, {}'.format(user.username))
+    flash(u'ログアウトしました。(^^)ﾉｼ')
     return redirect('/working_hours')
 
 
@@ -109,6 +106,29 @@ def callback():
     except InvalidSignatureError:
         abort(400)
     return 'OK'
+
+
+@handler.add(lm.FollowEvent)
+def handle_follow(event):
+    uid = event.source.user_id
+    profile = line_bot_api.get_profile(uid)
+    name = profile.display_name
+
+    # TODO: Register user to DB
+    pass
+
+
+@handler.add(lm.PostbackEvent)
+def handle_postback(event):
+    uid = event.source.user_id
+    action = event.postback.data
+
+    msg = event.timestamp
+
+    line_bot_api.reply_message(
+        event.reply_token,
+        lm.TextSendMessage(text=msg)
+    )
 
 
 @handler.add(lm.MessageEvent, message=lm.TextMessage)
