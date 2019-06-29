@@ -2,6 +2,8 @@
 
 from collections import defaultdict
 
+from pytz import timezone, utc
+
 from flask import (
     Blueprint,
     abort,
@@ -38,7 +40,7 @@ def dashboard(lineid):
 
         wh_data_by_date = defaultdict(list)
         for d in wh_data:
-            date = d.date.strftime('%Y/%m/%d')
+            date = d.date.replace(tzinfo=utc).astimezone(timezone('Asia/Tokyo')).strftime('%Y/%m/%d')
             wh_data_by_date[date].append(d)
 
         wh_table = []
@@ -46,7 +48,7 @@ def dashboard(lineid):
             begin = ''
             end = ''
             for d in wh_data_by_date[date]:
-                time = d.date.strftime('%H:%M')
+                time = d.date.replace(tzinfo=utc).astimezone(timezone('Asia/Tokyo')).strftime('%H:%M')
                 if d.action == 'begin':
                     begin = time
                 elif d.action == 'end':
