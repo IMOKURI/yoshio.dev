@@ -10,7 +10,7 @@ from flask import (
     url_for,
 )
 
-from linebot.exceptions import InvalidSignatureError
+from linebot.exceptions import InvalidSignatureError, LineBotApiError
 import linebot.models as lm
 
 from yoshio import db, line_bot_api, handler
@@ -51,7 +51,11 @@ def callback():
     body = request.get_data(as_text=True)
     try:
         handler.handle(body, signature)
-    except InvalidSignatureError:
+    except InvalidSignatureError as e:
+        print("InvalidSignatureError: {}".format(e))
+        abort(400)
+    except LineBotApiError as e:
+        print("LineBotApiError: {}".format(e))
         abort(400)
     return 'OK'
 
