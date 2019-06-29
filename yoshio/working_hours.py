@@ -3,7 +3,6 @@
 from flask import (
     Blueprint,
     abort,
-    current_app,
     flash,
     redirect,
     render_template,
@@ -19,7 +18,6 @@ from yoshio.models import User, WorkingHours
 
 
 bp = Blueprint('working_hours', __name__, url_prefix="/working_hours")
-logger = current_app.logger
 
 
 @bp.route('/')
@@ -35,16 +33,20 @@ def dashboard(lineid):
     )
 
     if authenticated:
+        username = db.session.query(User).filter(User.lineid == lineid).first()
         wh_data = db.session.query(WorkingHours).filter(WorkingHours.lineid == lineid).all()
 
-        return render_template('pages/wh_dashboard.html')
+        return render_template(
+            'pages/wh_dashboard.html',
+            username=username,
+            wh_data=wh_data
+        )
 
     return redirect(url_for('working_hours.index'))
 
 
 @bp.route('/callback', methods=['POST'])
 def callback():
-    logger.info('Connection test begin.')
     signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text=True)
     try:
