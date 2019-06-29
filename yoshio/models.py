@@ -24,7 +24,6 @@ class WorkingHours(db.Model):
 
     whid = sql.Column(
         sql.Integer,
-        default=0,
         primary_key=True,
         autoincrement=True
     )
