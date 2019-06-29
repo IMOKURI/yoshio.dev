@@ -1,6 +1,6 @@
-from datetime import datetime
 import flask_login as fl
 import sqlalchemy as sql
+from sqlalchemy.sql.expression import func
 
 from yoshio import db
 
@@ -24,6 +24,7 @@ class User(db.Model, fl.UserMixin):
 
 class WorkingHours(db.Model):
     __tablename__ = 'working_hours'
+    __table_args__ = {'sqlite_autoincrement': True}
 
     whid = sql.Column(
         sql.Integer,
@@ -37,8 +38,7 @@ class WorkingHours(db.Model):
         index=True
     )
     action = sql.Column(sql.Unicode(128))
-    date = sql.Column(sql.DATETIME, default=datetime.now, nullable=False)
-    sqlite_autoincrement = True
+    date = sql.Column(sql.types.DateTime(), server_default=func.now())
 
 
 def init():
