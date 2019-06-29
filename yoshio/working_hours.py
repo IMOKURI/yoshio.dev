@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 
+from collections import defaultdict
+
 from flask import (
     Blueprint,
     abort,
-    flash,
     redirect,
     render_template,
     request,
     url_for,
 )
 
-from linebot.exceptions import InvalidSignatureError, LineBotApiError
+from linebot.exceptions import InvalidSignatureError
 import linebot.models as lm
 
 from yoshio import db, line_bot_api, handler
@@ -27,19 +28,35 @@ def index():
 
 @bp.route('/<lineid>')
 def dashboard(lineid):
-    user, authenticated = User.auth(
+    username, authenticated = User.auth(
         db.session.query,
         lineid,
     )
 
     if authenticated:
-        username = db.session.query(User).filter(User.lineid == lineid).first()
         wh_data = db.session.query(WorkingHours).filter(WorkingHours.lineid == lineid).all()
+
+        wh_data_by_date = defaultdict(list)
+        for d in wh_data:
+            date = d.date.strftime('%Y/%m/%d')
+            wh_data_by_date[date].append(d)
+
+        wh_table = []
+        for date in wh_data_by_date:
+            begin = ''
+            end = ''
+            for d in wh_data_by_date[date]:
+                time = d.date.strftime('%H:%M')
+                if d.action == 'begin':
+                    begin = time
+                elif d.action == 'end':
+                    end = time
+            wh_table.append({'date': date, 'begin': begin, 'end': end})
 
         return render_template(
             'pages/wh_dashboard.html',
             username=username,
-            wh_data=wh_data
+            wh_table=wh_table
         )
 
     return redirect(url_for('working_hours.index'))

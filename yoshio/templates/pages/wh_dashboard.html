@@ -2,12 +2,16 @@
 {% block title %}Welcome to yoshio.dev!{% endblock %}
 {% block content %}
 
-<p>{{ username }} の勤怠記録</p>
+<p>{{ username.username }} の勤怠記録</p>
 
-{% for wh in wh_data %}
+<table>
+{% for wh in wh_table %}
   <tr>
-    <td>{{ wh }}</td>
+    <td>{{ wh.date }}</td>
+    <td>{{ wh.begin }}</td>
+    <td>{{ wh.end }}</td>
   </tr>
 {% endfor %}
+</table>
 
 {% endblock %}
