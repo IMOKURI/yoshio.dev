@@ -113,7 +113,7 @@ def handle_postback(event):
         action = None
         msg = u'おや！？'
 
-    if action in ['bebin', 'end']:
+    if action in ['begin', 'end']:
         wh_data = WorkingHours(
             lineid=lineid,
             action=action,
