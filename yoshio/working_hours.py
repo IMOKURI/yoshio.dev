@@ -3,10 +3,12 @@
 from flask import (
     Blueprint,
     abort,
+    current_app,
     flash,
     redirect,
     render_template,
     request,
+    url_for,
 )
 
 from linebot.exceptions import InvalidSignatureError
@@ -17,6 +19,7 @@ from yoshio.models import User, WorkingHours
 
 
 bp = Blueprint('working_hours', __name__, url_prefix="/working_hours")
+logger = current_app.logger
 
 
 @bp.route('/')
@@ -32,19 +35,24 @@ def dashboard(lineid):
     )
 
     if authenticated:
+        wh_data = db.session.query(WorkingHours).filter(WorkingHours.lineid == lineid).all()
+
         return render_template('pages/wh_dashboard.html')
 
-    return redirect('/working_hours')
+    return redirect(url_for('working_hours.index'))
 
 
 @bp.route('/callback', methods=['POST'])
 def callback():
+    logger.info('Connection test begin.')
     signature = request.headers['X-Line-Signature']
     body = request.get_data(as_text=True)
     try:
         handler.handle(body, signature)
-    except InvalidSignatureError:
+    except InvalidSignatureError as e:
+        logger.exceptions(e)
         abort(400)
+    logger.info('Connection test OK.')
     return 'OK'
 
 
