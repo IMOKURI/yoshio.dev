@@ -1,3 +1,6 @@
+import logging
+import logging.handlers
+
 from flask import Flask, render_template, redirect, url_for
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
@@ -8,6 +11,14 @@ from yoshio import config
 
 
 app = Flask(__name__, instance_relative_config=True)
+
+log_handler = logging.handlers.RotatingFileHandler("/var/log/yoshio/yoshio.log", "a+", maxBytes=3000, backupCount=5)
+log_handler.setLevel(logging.INFO)
+log_handler.setFormatter(logging.Formatter('[%(asctime)s] %(levelname)s in %(module)s: %(message)s'))
+app.logger.addHandler(log_handler)
+
+app.logger.info('Start up.')
+
 config.apply_to(app)
 
 line_bot_api = LineBotApi(app.config['CHANNEL_ACCESS_TOKEN'])
