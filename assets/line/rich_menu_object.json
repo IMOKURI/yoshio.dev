@@ -32,6 +32,19 @@
         "data": "action=end",
         "displayText": "退勤"
       }
+    },
+    {
+      "bounds": {
+        "x": 1667,
+        "y": 0,
+        "width": 833,
+        "height": 843
+      },
+      "action": {
+        "type": "postback",
+        "data": "action=display",
+        "displayText": "記録を見る"
+      }
     }
   ]
 }
