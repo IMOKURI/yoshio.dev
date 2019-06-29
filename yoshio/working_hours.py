@@ -34,7 +34,7 @@ def dashboard(lineid):
     if authenticated:
         return render_template('pages/wh_dashboard.html')
 
-    return redirect('/working_hours/index')
+    return redirect('/working_hours')
 
 
 @bp.route('/callback', methods=['POST'])
@@ -69,6 +69,7 @@ def handle_follow(event):
         event.reply_token,
         lm.TextSendMessage(text=msg)
     )
+
 
 @handler.add(lm.PostbackEvent)
 def handle_postback(event):

@@ -8,4 +8,5 @@ README.md
 .releaseignore
 release.sh
 
+assets
 instance
