@@ -104,7 +104,6 @@ def handle_postback(event):
         wh_data = WorkingHours(
             lineid=lineid,
             action=action,
-            date=event.timestamp
         )
 
         # TODO: Error handling

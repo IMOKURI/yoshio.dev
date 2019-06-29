@@ -15,11 +15,7 @@ def apply_to(app):
         SQLALCHEMY_TRACK_MODIFICATIONS=True,
     )
 
-    instance_config_path = os.path.abspath(os.path.join(
-        app.instance_path,
-        'config.py'
-    ))
-    app.config.from_pyfile(instance_config_path, silent=True)
+    app.config.from_pyfile('config.py', silent=True)
 
     try:
         os.makedirs(app.instance_path)
