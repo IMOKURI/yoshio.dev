@@ -51,10 +51,8 @@ def callback():
     body = request.get_data(as_text=True)
     try:
         handler.handle(body, signature)
-    except InvalidSignatureError as e:
-        logger.exceptions(e)
+    except InvalidSignatureError:
         abort(400)
-    logger.info('Connection test OK.')
     return 'OK'
 
 
