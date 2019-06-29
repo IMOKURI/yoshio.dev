@@ -51,11 +51,7 @@ def callback():
     body = request.get_data(as_text=True)
     try:
         handler.handle(body, signature)
-    except InvalidSignatureError as e:
-        print("InvalidSignatureError: {}".format(e))
-        abort(400)
-    except LineBotApiError as e:
-        print("LineBotApiError: {}".format(e))
+    except InvalidSignatureError:
         abort(400)
     return 'OK'
 

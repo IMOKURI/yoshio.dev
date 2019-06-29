@@ -9,7 +9,6 @@ pysnooper = "*"
 
 [packages]
 flask = "*"
-flask-login = "*"
 flask-sqlalchemy = "*"
 werkzeug = "*"
 line-bot-sdk = "*"

@@ -1,11 +1,10 @@
-import flask_login as fl
 import sqlalchemy as sql
 from sqlalchemy.sql.expression import func
 
 from yoshio import db
 
 
-class User(db.Model, fl.UserMixin):
+class User(db.Model):
     __tablename__ = 'users'
 
     lineid = sql.Column(sql.String(128), primary_key=True)
@@ -17,9 +16,6 @@ class User(db.Model, fl.UserMixin):
         if user is None:
             return None, False
         return user, True
-
-    def get_id(self):
-        return self.lineid
 
 
 class WorkingHours(db.Model):
