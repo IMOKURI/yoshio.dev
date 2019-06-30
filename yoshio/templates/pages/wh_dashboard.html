@@ -5,13 +5,24 @@
 <p>{{ username.username }} の勤怠記録</p>
 
 <table>
+  <thead><tr><th>月日</th><th>出勤時刻</th><th>退勤時刻</th></tr></thead>
+  <tbody>
 {% for wh in wh_table %}
-  <tr>
-    <td>{{ wh.date }}</td>
-    <td>{{ wh.begin }}</td>
-    <td>{{ wh.end }}</td>
-  </tr>
+    <tr>
+      <td>
+        {% if 'Sat' in wh.date %}<sat>
+        {% elif 'Sun' in wh.date %}<sun>
+        {% endif %}
+          {{ wh.date }}
+        {% if 'Sat' in wh.date %}</sat>
+        {% elif 'Sun' in wh.date %}</sun>
+        {% endif %}
+      </td>
+      <td>{{ wh.begin }}</td>
+      <td>{{ wh.end }}</td>
+    </tr>
 {% endfor %}
+  </tbody>
 </table>
 
 {% if 'last' in request.path %}
