@@ -9,14 +9,11 @@
   <tbody>
 {% for wh in wh_table %}
     <tr>
-      <td>
-        {% if 'Sat' in wh.date %}<sat>
-        {% elif 'Sun' in wh.date %}<sun>
-        {% endif %}
-          {{ wh.date }}
-        {% if 'Sat' in wh.date %}</sat>
-        {% elif 'Sun' in wh.date %}</sun>
-        {% endif %}
+      {% if 'Sat' in wh.date %}<td id="sat">
+      {% elif 'Sun' in wh.date %}<td id="sun">
+      {% else %}<td>
+      {% endif %}
+        {{ wh.date }}
       </td>
       <td>{{ wh.begin }}</td>
       <td>{{ wh.end }}</td>
