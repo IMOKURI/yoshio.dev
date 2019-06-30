@@ -10,12 +10,12 @@
 {% for wh in wh_table %}
     <tr>
       <td>
-        {% if 'Sat' in wh.date %}<sat>
-        {% elif 'Sun' in wh.date %}<sun>
+        {% if 'Sat' in wh.date %}<span style="color: #65b2ff">
+        {% elif 'Sun' in wh.date %}<span style="color: #ff8080">
         {% endif %}
           {{ wh.date }}
-        {% if 'Sat' in wh.date %}</sat>
-        {% elif 'Sun' in wh.date %}</sun>
+        {% if 'Sat' in wh.date %}</span>
+        {% elif 'Sun' in wh.date %}</span>
         {% endif %}
       </td>
       <td>{{ wh.begin }}</td>
