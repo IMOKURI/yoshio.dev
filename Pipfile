@@ -13,6 +13,7 @@ flask-sqlalchemy = "*"
 werkzeug = "*"
 line-bot-sdk = "*"
 pytz = "*"
+python-dateutil = "*"
 
 [requires]
 python_version = "2.7"

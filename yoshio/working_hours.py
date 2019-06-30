@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from collections import defaultdict
+from datetime import timedelta, datetime
+from dateutil.relativedelta import relativedelta
 
 from pytz import timezone, utc
 
@@ -36,11 +37,22 @@ def dashboard(lineid):
     )
 
     if authenticated:
-        wh_data = db.session.query(WorkingHours).filter(WorkingHours.lineid == lineid).all()
+        now_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        first_date_of_this_month = now_date.replace(day=1)
+        first_date_of_next_month = (first_date_of_this_month + relativedelta(months=1))
 
-        wh_data_by_date = defaultdict(list)
+        wh_data = db.session.query(WorkingHours).filter(
+            WorkingHours.lineid == lineid,
+            WorkingHours.date.between(first_date_of_this_month, first_date_of_next_month)
+        ).all()
+
+        wh_data_by_date = {}
+        for single_date in daterange(first_date_of_this_month, first_date_of_next_month):
+            date = single_date.strftime('%Y/%m/%d (%a)')
+            wh_data_by_date[date] = []
+
         for d in wh_data:
-            date = d.date.replace(tzinfo=utc).astimezone(timezone('Asia/Tokyo')).strftime('%Y/%m/%d')
+            date = d.date.replace(tzinfo=utc).astimezone(timezone('Asia/Tokyo')).strftime('%Y/%m/%d (%a)')
             wh_data_by_date[date].append(d)
 
         wh_table = []
@@ -54,6 +66,57 @@ def dashboard(lineid):
                 elif d.action == 'end':
                     end = time
             wh_table.append({'date': date, 'begin': begin, 'end': end})
+
+        wh_table.sort(key=lambda d: d['date'])
+
+        return render_template(
+            'pages/wh_dashboard.html',
+            username=username,
+            wh_table=wh_table
+        )
+
+    return redirect(url_for('working_hours.index'))
+
+
+@bp.route('/<lineid>/last')
+def dashboard_last(lineid):
+    username, authenticated = User.auth(
+        db.session.query,
+        lineid,
+    )
+
+    if authenticated:
+        now_date = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        first_date_of_this_month = now_date.replace(day=1)
+        first_date_of_last_month = (first_date_of_this_month - relativedelta(months=1))
+
+        wh_data = db.session.query(WorkingHours).filter(
+            WorkingHours.lineid == lineid,
+            WorkingHours.date.between(first_date_of_last_month, first_date_of_this_month)
+        ).all()
+
+        wh_data_by_date = {}
+        for single_date in daterange(first_date_of_last_month, first_date_of_this_month):
+            date = single_date.strftime('%Y/%m/%d (%a)')
+            wh_data_by_date[date] = []
+
+        for d in wh_data:
+            date = d.date.replace(tzinfo=utc).astimezone(timezone('Asia/Tokyo')).strftime('%Y/%m/%d (%a)')
+            wh_data_by_date[date].append(d)
+
+        wh_table = []
+        for date in wh_data_by_date:
+            begin = ''
+            end = ''
+            for d in wh_data_by_date[date]:
+                time = d.date.replace(tzinfo=utc).astimezone(timezone('Asia/Tokyo')).strftime('%H:%M')
+                if d.action == 'begin':
+                    begin = time
+                elif d.action == 'end':
+                    end = time
+            wh_table.append({'date': date, 'begin': begin, 'end': end})
+
+        wh_table.sort(key=lambda d: d['date'])
 
         return render_template(
             'pages/wh_dashboard.html',
@@ -137,3 +200,8 @@ def handle_message(event):
         event.reply_token,
         lm.TextSendMessage(text=event.message.text)
     )
+
+
+def daterange(start_date, end_date):
+    for n in range(int((end_date - start_date).days)):
+        yield start_date + timedelta(n)

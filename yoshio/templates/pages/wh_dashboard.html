@@ -14,4 +14,10 @@
 {% endfor %}
 </table>
 
+{% if 'last' in request.path %}
+<p><a href="{{ url_for('working_hours.dashboard', lineid=request.path.split('/')[2]) }}">今月の記録</a></p>
+{% else %}
+<p><a href="{{ url_for('working_hours.dashboard_last', lineid=request.path.split('/')[2]) }}">先月の記録</a></p>
+{% endif %}
+
 {% endblock %}
