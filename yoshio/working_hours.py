@@ -208,7 +208,7 @@ def handle_message(event):
         )
         return
 
-    dt = datetime.now().replace(
+    dt = datetime.now().astimezone(timezone('Asia/Tokyo')).replace(
         hour=int(time.group('hour')),
         minute=int(time.group('minute'))
     )
