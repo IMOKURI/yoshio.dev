@@ -2,6 +2,7 @@
 
 from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
+import re
 
 from pytz import timezone, utc
 
@@ -196,9 +197,49 @@ def handle_postback(event):
 
 @handler.add(lm.MessageEvent, message=lm.TextMessage)
 def handle_message(event):
+    time = re.search(r'(?P<hour>\d{1,2}):(?P<minute>\d{2})', event.message.text)
+    date = re.search(r'(?P<month>\d{1,2})/(?P<day>\d{1,2})', event.message.text)
+    msg = None
+
+    if time is None:
+        line_bot_api.reply_message(
+            event.reply_token,
+            lm.TextSendMessage(text=event.message.text)
+        )
+        return
+
+    dt = datetime.now().replace(hour=time.group('hour'), minute=time.group('minute'))
+
+    if date is not None:
+        dt = dt.replace(month=date.group('month'), day=date.group('day'))
+        dt_msg = dt.strftime('%m/%d (%a) %H:%M')
+
+    if re.search(u'出勤', event.message.text) is not None:
+        msg = dt_msg + u' で出勤時刻を記録しました！'
+        action = 'begin'
+    elif re.search(u'退勤', event.message.text) is not None:
+        msg = dt_msg + u' で退勤時刻を記録しました！'
+        action = 'end'
+    else:
+        line_bot_api.reply_message(
+            event.reply_token,
+            lm.TextSendMessage(text=u'指定時刻の登録は「出勤」「退勤」と一緒につぶやいてね(^^)')
+        )
+        return
+
+    wh_data = WorkingHours(
+        lineid=event.source.user_id,
+        action=action,
+        date=dt
+    )
+
+    # TODO: Error handling
+    db.session.add(wh_data)
+    db.session.commit()
+
     line_bot_api.reply_message(
         event.reply_token,
-        lm.TextSendMessage(text=event.message.text)
+        lm.TextSendMessage(text=msg)
     )
 
 
