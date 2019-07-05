@@ -208,10 +208,16 @@ def handle_message(event):
         )
         return
 
-    dt = datetime.now().replace(hour=time.group('hour'), minute=time.group('minute'))
+    dt = datetime.now().replace(
+        int(hour=time.group('hour')),
+        int(minute=time.group('minute'))
+    )
 
     if date is not None:
-        dt = dt.replace(month=date.group('month'), day=date.group('day'))
+        dt = dt.replace(
+            int(month=date.group('month')),
+            int(day=date.group('day'))
+        )
         dt_msg = dt.strftime('%m/%d (%a) %H:%M')
 
     if re.search(u'出勤', event.message.text) is not None:
