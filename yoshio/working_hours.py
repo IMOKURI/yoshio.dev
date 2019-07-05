@@ -209,14 +209,14 @@ def handle_message(event):
         return
 
     dt = datetime.now().replace(
-        int(hour=time.group('hour')),
-        int(minute=time.group('minute'))
+        hour=int(time.group('hour')),
+        minute=int(time.group('minute'))
     )
 
     if date is not None:
         dt = dt.replace(
-            int(month=date.group('month')),
-            int(day=date.group('day'))
+            month=int(date.group('month')),
+            day=int(date.group('day'))
         )
         dt_msg = dt.strftime('%m/%d (%a) %H:%M')
 
