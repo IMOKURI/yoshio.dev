@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import re
 from datetime import timedelta, datetime
 from dateutil.relativedelta import relativedelta
-import re
 
 from pytz import timezone, utc
 
@@ -212,7 +212,7 @@ def handle_message(event):
         hour=int(time.group('hour')),
         minute=int(time.group('minute')),
         tzinfo=timezone('Asia/Tokyo')
-    )
+    ).astimezone(utc)
 
     if date is not None:
         dt = dt.replace(
