@@ -212,7 +212,7 @@ def handle_message(event):
         hour=int(time.group('hour')),
         minute=int(time.group('minute')),
         tzinfo=timezone('Asia/Tokyo')
-    ).astimezone(utc)
+    )
 
     if date is not None:
         dt = dt.replace(
@@ -237,7 +237,7 @@ def handle_message(event):
     wh_data = WorkingHours(
         lineid=event.source.user_id,
         action=action,
-        date=dt
+        date=dt.astimezone(utc)
     )
 
     # TODO: Error handling
