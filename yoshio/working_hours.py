@@ -208,9 +208,10 @@ def handle_message(event):
         )
         return
 
-    dt = datetime.now().astimezone(timezone('Asia/Tokyo')).replace(
+    dt = datetime.now().replace(
         hour=int(time.group('hour')),
-        minute=int(time.group('minute'))
+        minute=int(time.group('minute')),
+        tzinfo=timezone('Asia/Tokyo')
     )
 
     if date is not None:
